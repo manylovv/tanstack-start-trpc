@@ -1,6 +1,19 @@
-import { TRPCError, TRPCRouterRecord } from '@trpc/server';
-import { z } from 'zod';
-import { createTRPCRouter, publicProcedure } from './init';
+import { TRPCRouterRecord } from "@trpc/server";
+import { z } from "zod";
+import { createTRPCRouter, publicProcedure } from "./init";
+
+const mockPosts = [
+  {
+    id: "1",
+    title: "Hello Tanstack",
+    body: "world",
+  },
+  {
+    id: "2",
+    title: "Hello Trpc",
+    body: "world",
+  },
+] satisfies Post[];
 
 type Post = {
   id: string;
@@ -10,33 +23,20 @@ type Post = {
 
 const postRouter = {
   list: publicProcedure.query(async () => {
-    const posts = await fetch(
-      'https://jsonplaceholder.typicode.com/posts',
-    ).then((r) => r.json() as Promise<Array<Post>>);
-    return posts.slice(0, 10);
+    return mockPosts;
   }),
-  byId: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ input }) => {
-      const post = await fetch(
-        `https://jsonplaceholder.typicode.com/posts/${input.id}`,
-      ).then((r) => {
-        if (r.status === 404) {
-          throw new TRPCError({ code: 'NOT_FOUND' });
-        }
-        return r.json() as Promise<Post>;
-      });
-
-      return post;
-    }),
+  byId: publicProcedure.input(z.object({ id: z.string() })).query(async ({ input }) => {
+    return mockPosts.find((post) => post.id === input.id);
+  }),
 } satisfies TRPCRouterRecord;
 
 const userRouter = {
-  me: publicProcedure.query(() => ({ name: 'John Doe' })),
+  me: publicProcedure.query(() => ({ name: "John Doe" })),
 } satisfies TRPCRouterRecord;
 
 export const trpcRouter = createTRPCRouter({
   post: postRouter,
   user: userRouter,
 });
+
 export type TRPCRouter = typeof trpcRouter;

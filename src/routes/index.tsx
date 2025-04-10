@@ -15,7 +15,7 @@ function Home() {
 
   return (
     <div className="p-10">
-      <h3>Welcome Home!!!</h3>
+      <h3>Posts from backend with tRPC:</h3>
 
       {isLoadingPosts ? (
         <div>Loading...</div>
