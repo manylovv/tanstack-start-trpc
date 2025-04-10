@@ -16,6 +16,7 @@ export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
   trpc: TRPCOptionsProxy<TRPCRouter>;
 }>()({
+  ssr: false,
   head: () => ({
     meta: [
       {
