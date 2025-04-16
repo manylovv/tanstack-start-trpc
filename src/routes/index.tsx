@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "~/trpc/react";
+import { useTRPC } from "~/trpc/init/react";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -8,20 +8,12 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const trpc = useTRPC();
-
-  const { data: posts, isLoading: isLoadingPosts } = useQuery(
-    trpc.post.list.queryOptions(),
-  );
+  const { data, isLoading } = useQuery(trpc.main.getHello.queryOptions());
 
   return (
     <div className="p-10">
-      <h3>Posts from backend with tRPC:</h3>
-
-      {isLoadingPosts ? (
-        <div>Loading...</div>
-      ) : (
-        <div>{posts?.map((post) => <div key={post.id}>{post.title}</div>)}</div>
-      )}
+      <h3>Hello from backend with tRPC:</h3>
+      {isLoading ? <div>Loading...</div> : <div>hello {data?.hello}</div>}
     </div>
   );
 }
