@@ -9,6 +9,7 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { useEffect } from "react";
+import { env } from "~/env";
 import appCss from "~/lib/styles/app.css?url";
 import { TRPCRouter } from "~/trpc/init/router";
 
@@ -43,12 +44,9 @@ function RootComponent() {
   );
 }
 
-const isDev = import.meta.env.DEV;
-const isErudaEnabled = import.meta.env.VITE_ERUDA_ENABLED === "true";
-
 function RootDocument({ children }: { readonly children: React.ReactNode }) {
   useEffect(() => {
-    if (isDev && isErudaEnabled) {
+    if (import.meta.env.DEV && env.VITE_ERUDA_ENABLED) {
       import("eruda").then((eruda) => {
         eruda.default.init();
       });
@@ -64,8 +62,10 @@ function RootDocument({ children }: { readonly children: React.ReactNode }) {
       <body>
         {children}
 
-        {isDev && <ReactQueryDevtools buttonPosition="bottom-left" />}
-        {isDev && <TanStackRouterDevtools position="bottom-right" />}
+        {import.meta.env.DEV && env.VITE_ERUDA_ENABLED && (
+          <ReactQueryDevtools buttonPosition="bottom-left" />
+        )}
+        {import.meta.env.DEV && <TanStackRouterDevtools position="bottom-right" />}
 
         <Scripts />
       </body>
